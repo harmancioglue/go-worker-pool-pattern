@@ -3,29 +3,24 @@ package main
 import (
 	"github.com/harmancioglue/go-worker-pool-pattern/pool"
 	"log"
-	"time"
 )
 
 func main() {
 	totalWorkerCount := 5
-	wP := pool.CreateWorkerPool() //create worker pool
-	wP.Handle(totalWorkerCount)   //create workers
 
-	totalTask := 5 //task is square of the number
-	resultC := make(chan int, totalTask)
+	jobList := 15 //job is square of the number
+	resultChannel := make(chan int, jobList)
 
-	for i := 1; i <= totalTask; i++ {
+	wP := pool.CreateWorkerPool(resultChannel) //create worker pool
+	wP.Handle(totalWorkerCount)                //create workers
+
+	for i := 1; i <= jobList; i++ {
 		id := i
-		wP.AddItem(func() {
-			log.Printf("Starting task %d", id)
-			time.Sleep(5 * time.Second)
-			resultC <- id * 2
-		})
+		wP.AddItem(id)
 	}
 
-	for i := 0; i < totalTask; i++ {
-		res := <-resultC
-		log.Printf("Task has been finished with result %d:", res)
+	for i := 0; i < jobList; i++ {
+		res := <-resultChannel
+		log.Printf("Job done. Result: %d", res)
 	}
-
 }

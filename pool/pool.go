@@ -1,6 +1,9 @@
 package pool
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type IWorkerPool interface {
 	Handle()
@@ -8,13 +11,15 @@ type IWorkerPool interface {
 }
 
 type workerPool struct {
-	queue chan func()
+	queue  chan int
+	result chan int
 }
 
-func CreateWorkerPool() *workerPool {
+func CreateWorkerPool(resultChannel chan int) *workerPool {
 	fmt.Printf("Worker pool created")
 	return &workerPool{
-		queue: make(chan func()),
+		queue:  make(chan int),
+		result: resultChannel,
 	}
 }
 
@@ -22,14 +27,15 @@ func (wP *workerPool) Handle(workerCount int) {
 	for i := 1; i <= workerCount; i++ {
 		fmt.Printf("Worker %d created\n", i)
 		go func(id int) {
-			for task := range wP.queue {
-				fmt.Println(fmt.Sprintf("Worker %d process task", id))
-				task()
+			for job := range wP.queue {
+				time.Sleep(3 * time.Second)
+				fmt.Println(fmt.Sprintf("Worker %d process job", id))
+				wP.result <- job * job
 			}
 		}(i)
 	}
 }
 
-func (wP *workerPool) AddItem(task func()) {
-	wP.queue <- task
+func (wP *workerPool) AddItem(job int) {
+	wP.queue <- job
 }
