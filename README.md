@@ -8,7 +8,7 @@ This repository aims to show how worker pool simply works in Go.
 
 ## Intro
 
-![image](![image](https://github.com/user-attachments/assets/6fde1377-6c07-4854-82c0-e56db0a5a5d4))
+![image](https://github.com/harmancioglue/go-worker-pool-pattern/assets/27441734/93f76717-0518-4f09-ae01-4c8b1fcf2395)
 
 Worker pools is used to achieve concurrency with fixed number of workers to execute multiple amount of tasks on a queue. 
 
